@@ -14,7 +14,7 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
-    public Room createRoom(){
+    public Room creatRoom(){
         String roomId = UUID.randomUUID().toString()
                 .substring(0,6)
                 .toUpperCase();
@@ -37,7 +37,7 @@ public class RoomService {
                 new RuntimeException("Room Not Found"));
     }
 
-    public List<Room> getAllRoom(){
+    public List<Room> getAllRooms(){
         return roomRepository.findAll();
     }
 

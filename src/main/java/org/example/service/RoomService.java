@@ -5,7 +5,7 @@ import org.example.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,12 +28,12 @@ public class RoomService {
         room.setRoomId(roomId);
         room.setLanguage("javascript");
         room.setCode("");
-        room.setCreatedAt(LocalDate.now());
+        room.setCreatedAt(LocalDateTime.now());
         return roomRepository.save(room);
     }
 
     public Room getRoom(String roomId){
-        return roomRepository.findById(roomId).orElseThrow(()->
+        return roomRepository.findByRoomId(roomId).orElseThrow(()->
                 new RuntimeException("Room Not Found"));
     }
 

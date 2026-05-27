@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,9 +16,9 @@ import java.time.LocalDate;
 @Document(collection = "rooms")
 public class Room {
     @Id
-    private Long id;
+    private String id;
     private String roomId;
     private String language;
     private String code;
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 }

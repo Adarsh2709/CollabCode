@@ -1,20 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { Terminal, Plus, LogIn } from 'lucide-react';
+import { Plus, LogIn } from 'lucide-react';
 import Button from '../ui/Button';
+import { Logo } from '../ui/Logo';
 
 export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-brand-border bg-brand-bg/60 backdrop-blur-md transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-          <div className="p-2 bg-brand-blue/10 rounded-lg text-brand-blue border border-brand-blue/20 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] transition-all">
-            <Terminal size={18} className="transform group-hover:rotate-6 transition-transform" />
-          </div>
-          <span className="font-space-grotesk font-bold text-lg text-brand-primary tracking-wide">
-            Collab<span className="text-brand-blue">Code</span>
-          </span>
+        <Link href="/" className="flex items-center group cursor-pointer">
+          <Logo size={28} />
         </Link>
 
         {/* Navigation */}

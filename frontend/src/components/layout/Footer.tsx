@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Terminal } from 'lucide-react';
+import { Logo } from '../ui/Logo';
 
 const GithubIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
@@ -18,16 +18,11 @@ export const Footer: React.FC = () => {
     <footer className="w-full border-t border-brand-border bg-brand-bg-sec/15 py-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Logo & Copyright */}
-        <div className="flex items-center gap-2">
-          <Terminal size={14} className="text-brand-blue" />
+        <div className="flex items-center gap-4">
+          <Logo size={24} />
           <span className="text-xs text-brand-secondary">
             &copy; {new Date().getFullYear()} CollabCode. All rights reserved.
           </span>
-        </div>
-
-        {/* Creator Love */}
-        <div className="text-xs text-brand-secondary flex items-center gap-1">
-          Made with <Heart size={12} className="text-red-500 fill-current animate-pulse" /> for developers worldwide.
         </div>
 
         {/* Links */}

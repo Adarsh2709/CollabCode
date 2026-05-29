@@ -8,6 +8,9 @@ COPY build.gradle .
 COPY settings.gradle .
 COPY src ./src
 
+# Fix line endings and permissions for gradlew (Windows compatibility)
+RUN sed -i 's/\r$//' gradlew && chmod +x gradlew
+
 # Build the fat jar
 RUN ./gradlew bootJar --no-daemon
 

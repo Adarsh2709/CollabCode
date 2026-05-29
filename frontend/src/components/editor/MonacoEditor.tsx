@@ -19,21 +19,20 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
   // Map custom language ID to Monaco supported IDs
   const getMonacoLanguage = (lang: string) => {
     switch (lang.toLowerCase()) {
-      case 'javascript':
-        return 'javascript';
-      case 'typescript':
-        return 'typescript';
-      case 'java':
-        return 'java';
-      case 'python':
-        return 'python';
-      default:
-        return 'plaintext';
+      case 'javascript': return 'javascript';
+      case 'typescript': return 'typescript';
+      case 'java':       return 'java';
+      case 'python':     return 'python';
+      default:           return 'java';
     }
   };
 
   const handleEditorDidMount = (editor: any, monaco: Monaco) => {
     editorRef.current = editor;
+
+    // Disable built-in diagnostics/error markers (removes red squiggle lines)
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true, noSyntaxValidation: true });
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true, noSyntaxValidation: true });
 
     // Define custom premium theme matching our background: #0B0F14
     monaco.editor.defineTheme('collabcode-dark', {
@@ -50,11 +49,15 @@ export const MonacoEditor: React.FC<MonacoEditorProps> = ({
       colors: {
         'editor.background': '#0B0F14',
         'editor.foreground': '#F8FAFC',
-        'editor.lineHighlightBackground': '#1A2332/30',
+        'editor.lineHighlightBackground': '#1A233240',
+        'editor.lineHighlightBorder': '#00000000',
         'editorLineNumber.foreground': '#4f5d75',
         'editorLineNumber.activeForeground': '#3B82F6',
-        'editor.selectionBackground': '#3B82F6/20',
-        'editor.inactiveSelectionBackground': '#3B82F6/10',
+        'editor.selectionBackground': '#3B82F630',
+        'editor.inactiveSelectionBackground': '#3B82F615',
+        'editorGutter.background': '#0B0F14',
+        'editorError.foreground': '#00000000',
+        'editorWarning.foreground': '#00000000',
       },
     });
 

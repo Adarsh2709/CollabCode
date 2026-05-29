@@ -3,7 +3,7 @@ import { Room } from '../types/Room';
 
 export const roomService = {
   createRoom: async (): Promise<Room> => {
-    const response = await api.post<Room>('/rooms');
+    const response = await api.post<Room>('/rooms', { language: 'java' });
     return response.data;
   },
 

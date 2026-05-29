@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Terminal, Code, Users, Calendar, ArrowRight } from 'lucide-react';
+import { Terminal, Code, Calendar, ArrowRight, Activity } from 'lucide-react';
 import { Room } from '../../types/Room';
-import Button from '../ui/Button';
 
 interface RoomCardProps {
   room: Room;
@@ -10,7 +9,6 @@ interface RoomCardProps {
 }
 
 export const RoomCard: React.FC<RoomCardProps> = ({ room, onJoin }) => {
-  // Format dates
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Just now';
     try {
@@ -25,78 +23,78 @@ export const RoomCard: React.FC<RoomCardProps> = ({ room, onJoin }) => {
     }
   };
 
-  const getLanguageColor = (lang: string) => {
+  const getLangColor = (lang: string) => {
     switch (lang.toLowerCase()) {
-      case 'javascript':
-        return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
-      case 'typescript':
-        return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
-      case 'java':
-        return 'text-orange-400 bg-orange-500/10 border-orange-500/20';
-      case 'python':
-        return 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20';
-      default:
-        return 'text-brand-blue bg-brand-blue/10 border-brand-blue/20';
+      case 'javascript': return { text: 'text-yellow-400', border: 'border-yellow-500/30', bg: 'bg-yellow-500/8' };
+      case 'typescript': return { text: 'text-blue-400', border: 'border-blue-500/30', bg: 'bg-blue-500/8' };
+      case 'java': return { text: 'text-brand-orange', border: 'border-brand-orange/30', bg: 'bg-brand-orange/8' };
+      case 'python': return { text: 'text-cyan-400', border: 'border-cyan-500/30', bg: 'bg-cyan-500/8' };
+      default: return { text: 'text-brand-blue', border: 'border-brand-blue/30', bg: 'bg-brand-blue/8' };
     }
   };
 
+  const lang = getLangColor(room.language);
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="p-5 rounded-xl bg-brand-bg-sec/25 border border-brand-border glassmorphism hover:border-brand-blue/45 hover:shadow-[0_0_25px_rgba(59,130,246,0.06)] transition-all duration-300 flex flex-col gap-4"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="tactical-card corner-bracket p-5 flex flex-col gap-4 group"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-brand-blue/10 rounded-lg text-brand-blue border border-brand-blue/20">
-            <Terminal size={18} />
+      {/* ── Header ── */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-brand-blue/8 border border-brand-blue/20 flex items-center justify-center text-brand-blue flex-shrink-0">
+            <Terminal size={15} />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-brand-primary tracking-wide uppercase">
-              Room {room.roomId}
+            <h4 className="font-space-grotesk text-sm font-black tracking-widest text-brand-primary uppercase">
+              {room.roomId}
             </h4>
-            <span className="text-[10px] text-brand-secondary/70">
-              ID: {room.id?.substring(0, 10) || 'Local'}...
+            <span className="font-jetbrains-mono text-[9px] text-brand-secondary/40 tracking-wider">
+              {room.id ? `ID: ${room.id.substring(0, 12)}...` : 'LOCAL_INSTANCE'}
             </span>
           </div>
         </div>
-        <span className={`px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded border ${getLanguageColor(room.language)}`}>
+
+        {/* Language badge */}
+        <span className={`font-jetbrains-mono text-[9px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 border ${lang.text} ${lang.border} ${lang.bg} flex-shrink-0`}>
           {room.language}
         </span>
       </div>
 
-      {/* Details */}
-      <div className="grid grid-cols-2 gap-3 text-xs text-brand-secondary border-y border-brand-border/60 py-3 my-1">
+      {/* ── Stats Row ── */}
+      <div className="grid grid-cols-2 gap-3 border-t border-b border-brand-border/40 py-3">
         <div className="flex items-center gap-1.5">
-          <Calendar size={13} className="text-brand-secondary/60" />
-          <span>{formatDate(room.createdAt)}</span>
+          <Calendar size={11} className="text-brand-secondary/40" />
+          <span className="font-jetbrains-mono text-[9px] text-brand-secondary/50 tracking-wide">
+            {formatDate(room.createdAt)}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 justify-end">
-          <Code size={13} className="text-brand-secondary/60" />
-          <span className="font-jetbrains-mono text-[10px] text-brand-green">Active Synchronized</span>
+          <span className="w-1.5 h-1.5 bg-brand-green rounded-full animate-pulse shadow-[0_0_6px_#22C55E]" />
+          <span className="font-jetbrains-mono text-[9px] text-brand-green tracking-wider font-bold">
+            LIVE
+          </span>
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between mt-1">
-        <div className="flex -space-x-2">
-          <div className="w-6 h-6 rounded-full border-2 border-brand-bg bg-brand-blue text-[9px] flex items-center justify-center font-bold text-white uppercase shadow-[0_0_10px_rgba(59,130,246,0.2)]">
-            D1
-          </div>
-          <div className="w-6 h-6 rounded-full border-2 border-brand-bg bg-brand-green text-[9px] flex items-center justify-center font-bold text-white uppercase shadow-[0_0_10px_rgba(34,197,94,0.2)]">
-            D2
-          </div>
+      {/* ── Footer ── */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <Activity size={11} className="text-brand-secondary/40" />
+          <span className="font-jetbrains-mono text-[9px] text-brand-secondary/40 tracking-wider uppercase">
+            Synchronized
+          </span>
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
+
+        <button
           onClick={() => onJoin(room.roomId)}
-          className="text-xs hover:text-white font-medium flex items-center gap-1 cursor-pointer group"
+          className="inline-flex items-center gap-1.5 font-jetbrains-mono text-[10px] font-bold tracking-[0.12em] uppercase text-brand-secondary hover:text-brand-primary border border-brand-border/60 hover:border-brand-blue/50 hover:bg-brand-blue/5 px-3 py-1.5 transition-all duration-150 group-hover:border-brand-blue/40"
         >
-          Join Room
-          <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
-        </Button>
+          JOIN
+          <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
+        </button>
       </div>
     </motion.div>
   );

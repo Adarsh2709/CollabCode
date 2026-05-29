@@ -58,7 +58,8 @@ export default function RoomWorkspacePage() {
   // Initial code set from REST details
   useEffect(() => {
     if (room && room.code !== undefined && code === '') {
-      setCode(room.code);
+      const defaultJava = `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, CollabCode!");\n    }\n}`;
+      setCode(room.code || defaultJava);
     }
   }, [room, code]);
 

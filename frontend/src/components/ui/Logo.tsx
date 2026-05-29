@@ -26,7 +26,7 @@ export const LogoIcon: React.FC<LogoProps> = ({ size = 32, className = '', ...pr
         </linearGradient>
       </defs>
 
-      {/* Left Code Bracket Link (<) */}
+      {/* Left Code Bracket (<) */}
       <path
         d="M 28 6 L 12 20 L 28 34 C 34 34 38 30 38 24 C 38 19.5 35 17.5 31 17.5 C 27 17.5 24 19.5 24 24"
         stroke="url(#logo-blue-grad)"
@@ -35,7 +35,7 @@ export const LogoIcon: React.FC<LogoProps> = ({ size = 32, className = '', ...pr
         strokeLinejoin="round"
       />
 
-      {/* Right Code Bracket Link (>) */}
+      {/* Right Code Bracket (>) */}
       <path
         d="M 44 34 L 60 20 L 44 6 C 38 6 34 10 34 16 C 34 20.5 37 22.5 41 22.5 C 45 22.5 48 20.5 48 16"
         stroke="url(#logo-green-grad)"

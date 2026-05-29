@@ -26,7 +26,7 @@ public class RoomService {
         }
         Room room = new Room();
         room.setRoomId(roomId);
-        room.setLanguage("javascript");
+        room.setLanguage("java");
         room.setCode("");
         room.setCreatedAt(LocalDateTime.now());
         return roomRepository.save(room);

@@ -3,60 +3,48 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Terminal, Users, User, ArrowRight, AlertCircle } from 'lucide-react';
+import { Users, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
 import { roomService } from '../../services/roomService';
 
 function JoinRoomForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [displayName, setDisplayName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Autofill roomCode if passed in query parameters
   useEffect(() => {
     const code = searchParams.get('roomId');
-    if (code) {
-      setRoomCode(code.toUpperCase());
-    }
+    if (code) setRoomCode(code.toUpperCase());
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
     const trimmedName = displayName.trim();
     const trimmedCode = roomCode.trim().toUpperCase();
 
     if (!trimmedName) {
-      setError('Please enter a display name so others can recognize you.');
+      setError('DISPLAY_NAME is required so others can identify you.');
       return;
     }
-
     if (!trimmedCode || trimmedCode.length !== 6) {
-      setError('Please enter a valid 6-character room code.');
+      setError('A valid 6-character ROOM_CODE is required.');
       return;
     }
 
     setIsLoading(true);
     try {
-      // Validate that the room actually exists on the backend first
       await roomService.getRoomDetails(trimmedCode);
-      
-      // Save display name to sessionStorage/localStorage so it can be picked up by the room workspace
       sessionStorage.setItem(`username_${trimmedCode}`, trimmedName);
-      
-      // Redirect directly to the live editor room workspace!
       router.push(`/room/${trimmedCode}`);
     } catch (err: any) {
       console.error('Room validation failed:', err);
-      setError('Room not found. Make sure the code is correct and the room is active.');
+      setError('ROOM_NOT_FOUND — verify the code is correct and the room is active.');
       setIsLoading(false);
     }
   };
@@ -66,65 +54,102 @@ function JoinRoomForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="w-full max-w-md p-8 rounded-xl bg-brand-bg-sec/45 border border-brand-border glassmorphism shadow-[0_0_50px_rgba(11,15,20,0.8)] flex flex-col gap-6"
+      className="w-full max-w-md border border-brand-border bg-brand-bg-sec/40 glassmorphism shadow-[0_0_60px_rgba(11,15,20,0.6)] flex flex-col"
     >
-      {/* Title */}
-      <div className="flex flex-col items-center text-center gap-2">
-        <div className="p-3 bg-brand-blue/10 rounded-xl text-brand-blue border border-brand-blue/20 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-          <Users size={24} />
+      {/* Card header bar */}
+      <div className="px-7 pt-6 pb-4 border-b border-brand-border/50 flex items-center gap-3">
+        <div className="w-9 h-9 bg-brand-blue/10 border border-brand-blue/20 flex items-center justify-center text-brand-blue shadow-[0_0_12px_rgba(59,130,246,0.15)]">
+          <Users size={18} />
         </div>
-        <h2 className="text-xl font-bold font-space-grotesk tracking-wide text-brand-primary uppercase mt-2">
-          Join Coding Session
-        </h2>
-        <p className="text-xs text-brand-secondary">
-          Enter your display name and the 6-character code to join the synchronized editor workspace.
-        </p>
+        <div>
+          <h2 className="font-space-grotesk text-base font-black tracking-wide text-brand-primary uppercase">
+            Join Coding Session
+          </h2>
+          <p className="font-inter text-[11px] text-brand-secondary/50 mt-0.5">Enter your details to connect</p>
+        </div>
       </div>
 
-      {/* Error display */}
-      {error ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="p-3.5 bg-red-950/20 border border-red-500/35 rounded-lg text-red-400 text-xs flex items-start gap-2"
-        >
-          <AlertCircle size={15} className="mt-0.5 flex-shrink-0" />
-          <span>{error}</span>
-        </motion.div>
-      ) : null}
+      <div className="px-7 py-6 flex flex-col gap-5">
+        <p className="font-inter text-[11px] text-brand-secondary/60 leading-relaxed">
+          Enter your display name and the 6-character room code to connect to the synchronized editor workspace.
+        </p>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <Input
-          label="Your Display Name"
-          placeholder="e.g. Adarsh Jha"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          required
-          maxLength={20}
-          className="capitalize font-semibold text-brand-primary"
-        />
+        {/* Error */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-3.5 border border-red-500/30 bg-red-950/15 text-red-400 text-xs flex items-start gap-2"
+          >
+            <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
+            <span className="font-jetbrains-mono text-[10px] leading-relaxed">{error}</span>
+          </motion.div>
+        )}
 
-        <Input
-          label="6-Digit Room Code"
-          placeholder="e.g. A1B2C3"
-          value={roomCode}
-          onChange={(e) => setRoomCode(e.target.value)}
-          required
-          maxLength={6}
-          className="uppercase tracking-widest font-jetbrains-mono font-bold text-center text-brand-blue"
-        />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {/* Display Name */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-jetbrains-mono text-[10px] font-bold text-brand-secondary/70 tracking-[0.15em] uppercase">
+              DISPLAY_NAME
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Adarsh Jha"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              maxLength={20}
+              required
+              className="w-full bg-brand-bg border border-brand-border hover:border-brand-secondary/40 focus:border-brand-blue focus:outline-none focus:ring-0 px-3 py-2.5 font-inter text-sm text-brand-primary placeholder:text-brand-secondary/30 transition-colors duration-150"
+            />
+          </div>
 
-        <Button
-          type="submit"
-          fullWidth
-          isLoading={isLoading}
-          className="mt-2 font-semibold shadow-[0_0_15px_rgba(59,130,246,0.25)] flex items-center gap-1.5 py-3"
-        >
-          Connect to Room
-          <ArrowRight size={16} />
-        </Button>
-      </form>
+          {/* Room Code */}
+          <div className="flex flex-col gap-1.5">
+            <label className="font-jetbrains-mono text-[10px] font-bold text-brand-secondary/70 tracking-[0.15em] uppercase">
+              ROOM_CODE
+            </label>
+            <input
+              type="text"
+              placeholder="A1B2C3"
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+              maxLength={6}
+              required
+              className="w-full bg-brand-bg border border-brand-border hover:border-brand-secondary/40 focus:border-brand-blue focus:outline-none focus:ring-0 px-3 py-2.5 font-jetbrains-mono text-base font-bold text-brand-blue text-center tracking-[0.35em] placeholder:text-brand-secondary/30 placeholder:tracking-normal transition-colors duration-150"
+            />
+            <span className="font-jetbrains-mono text-[9px] text-brand-secondary/30 tracking-widest">
+              6 CHARACTERS REQUIRED
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full inline-flex items-center justify-center gap-2 bg-brand-blue hover:bg-blue-500 text-white font-jetbrains-mono text-[11px] font-bold tracking-[0.15em] uppercase px-6 py-3 mt-1 transition-all duration-200 shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 size={13} className="animate-spin" />
+                CONNECTING...
+              </>
+            ) : (
+              <>
+                CONNECT_TO_ROOM
+                <ArrowRight size={13} />
+              </>
+            )}
+          </button>
+        </form>
+
+        {/* Bottom hint */}
+        <div className="border-t border-brand-border/40 pt-4 flex items-center justify-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-green/60" />
+          <p className="font-inter text-[11px] text-brand-secondary/40 text-center">
+            End-to-end encrypted session
+          </p>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -135,24 +160,27 @@ export default function JoinRoomPage() {
       <Navbar />
 
       <main className="flex-1 flex flex-col items-center justify-center py-12 px-4 relative">
-        {/* Glow Backgrounds */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-brand-blue/5 blur-[100px] pointer-events-none" />
+        {/* Dot grid bg */}
+        <div className="absolute inset-0 grid-dots opacity-20 pointer-events-none" />
+        {/* Glow blob */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full bg-brand-blue/4 blur-[120px] pointer-events-none" />
 
-        <Suspense
-          fallback={
-            <div className="flex flex-col items-center justify-center text-brand-secondary gap-3">
-              <svg className="animate-spin h-6 w-6 text-brand-blue" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              <span className="text-xs font-semibold uppercase tracking-widest font-space-grotesk animate-pulse">
-                Preparing Gateway...
-              </span>
-            </div>
-          }
-        >
-          <JoinRoomForm />
-        </Suspense>
+
+
+        <div className="relative z-10 w-full max-w-md">
+          <Suspense
+            fallback={
+              <div className="flex flex-col items-center justify-center text-brand-secondary gap-3 py-16">
+                <Loader2 size={28} className="animate-spin text-brand-blue" />
+                <span className="font-jetbrains-mono text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
+                  PREPARING_GATEWAY...
+                </span>
+              </div>
+            }
+          >
+            <JoinRoomForm />
+          </Suspense>
+        </div>
       </main>
 
       <Footer />

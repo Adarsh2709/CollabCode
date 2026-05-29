@@ -9,10 +9,10 @@ interface LanguageSelectorProps {
 }
 
 const LANGUAGES = [
-  { id: 'javascript', name: 'JavaScript', ext: '.js', color: 'text-yellow-400' },
-  { id: 'typescript', name: 'TypeScript', ext: '.ts', color: 'text-blue-400' },
-  { id: 'java', name: 'Java', ext: '.java', color: 'text-orange-400' },
-  { id: 'python', name: 'Python', ext: '.py', color: 'text-cyan-400' },
+  { id: 'java',       name: 'Java',       ext: '.java', color: 'text-orange-400' },
+  { id: 'javascript', name: 'JavaScript', ext: '.js',   color: 'text-yellow-400' },
+  { id: 'typescript', name: 'TypeScript', ext: '.ts',   color: 'text-blue-400'   },
+  { id: 'python',     name: 'Python',     ext: '.py',   color: 'text-cyan-400'   },
 ];
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
@@ -22,7 +22,9 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedLang = LANGUAGES.find((l) => l.id === currentLanguage.toLowerCase()) || LANGUAGES[0];
+  const selectedLang =
+    LANGUAGES.find((l) => l.id === currentLanguage?.toLowerCase()) ||
+    LANGUAGES.find((l) => l.id === 'java')!;
 
   const handleSelect = (langId: string) => {
     if (disabled) return;
